@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 import FieldInput from './components/FieldInput.vue';
+import FingerprintTool from './components/FingerprintTool.vue';
 import {
   FIELD_ORDER,
   NUMBER_FIELDS,
@@ -10,8 +11,9 @@ import {
   parseCode,
   toInteger,
 } from './lib/codec.js';
+import { readOrCreateDeviceId } from './lib/device.js';
 import { FLAG_FIELDS, IDENTITY_FIELDS, SCORE_FIELDS } from './lib/fields.js';
-import { makeTemplatePayload } from './lib/template.js';
+import { makeTemplatePayload, todayKey, weekKey, weekNo } from './lib/template.js';
 
 const initialPayload = normalizePayload(makeTemplatePayload());
 const initialCode = encodePayload(initialPayload);
@@ -87,6 +89,38 @@ const wrongCount = computed(
 
 const patch = (key, value) => {
   draft.value = { ...draft.value, [key]: value };
+};
+
+const patchFields = (fields) => {
+  draft.value = { ...draft.value, ...fields };
+};
+
+const toDateInputValue = (value) => {
+  const text = String(value ?? '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return '';
+  const [year, month, day] = text.split('-').map(Number);
+  const date = new Date(year, month - 1, day, 12, 0, 0);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return '';
+  return text;
+};
+
+const quickDate = computed(() => toDateInputValue(draft.value.d));
+
+const applyQuickDate = (event) => {
+  const value = toDateInputValue(event.target.value);
+  if (!value) return;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day, 12, 0, 0);
+  patchFields({ d: value, w: weekNo(date), k: weekKey(date) });
+};
+
+const applyToday = () => {
+  const now = new Date();
+  patchFields({ d: todayKey(now), w: weekNo(now), k: weekKey(now) });
+};
+
+const useLocalDevice = () => {
+  patch('dv', readOrCreateDeviceId());
 };
 
 const updateField = (key, raw) => {
@@ -292,7 +326,7 @@ onBeforeUnmount(() => {
         <section class="min-w-0 border border-rule bg-sheet p-5 sm:p-7" aria-labelledby="ledger-heading">
           <h2 id="ledger-heading" class="sr-only">成绩字段</h2>
           <p class="mb-5 text-[12px] leading-5 text-faint">
-            左侧成绩码来自学生端结算页。这里的字段与码内 JSON 一一对应。
+            左侧成绩码来自学生端结算页。成绩字段与码内 JSON 一一对应；学号指纹区用来核对身份。
           </p>
 
           <section aria-labelledby="identity-heading">
@@ -325,12 +359,50 @@ onBeforeUnmount(() => {
                 <span class="text-[11px] text-faint">{{ flag.hint }}</span>
               </label>
             </div>
+            <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <button
+                type="button"
+                data-action="local-device"
+                class="border border-pine/60 px-2.5 py-1 text-[11px] leading-4 text-pine transition-colors hover:bg-pine hover:text-sheet"
+                @click="useLocalDevice"
+              >
+                使用本机设备标识
+              </button>
+              <span class="text-[11px] leading-5 text-faint">复用本浏览器保存的随机 dv；没有就生成一个，仅在你点击时保存。</span>
+            </div>
+          </section>
+
+          <section class="mt-7 border-t border-rule pt-6" aria-labelledby="fingerprint-heading">
+            <div class="flex items-baseline justify-between gap-3 border-b border-rule pb-2">
+              <h3 id="fingerprint-heading" class="font-title text-lg text-pine">学号指纹</h3>
+            </div>
+            <FingerprintTool :fingerprint="String(draft.u ?? '')" @apply="updateField('u', $event)" />
           </section>
 
           <section class="mt-7 border-t border-rule pt-6" aria-labelledby="score-heading">
-            <div class="flex items-baseline justify-between gap-3 border-b border-rule pb-2">
+            <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule pb-2">
               <h3 id="score-heading" class="font-title text-lg text-pine">本周成绩</h3>
+              <div class="flex flex-wrap items-center gap-2">
+                <label for="quick-date" class="sr-only">按日期填入成绩日期、周次和周键</label>
+                <input
+                  id="quick-date"
+                  data-quick-date
+                  type="date"
+                  :value="quickDate"
+                  class="w-[124px] border-0 border-b border-rule bg-transparent px-0 py-1 text-[12px] leading-5 text-ink outline-none focus:border-pine"
+                  @input="applyQuickDate"
+                />
+                <button
+                  type="button"
+                  data-action="today"
+                  class="border border-pine/60 px-2 py-1 text-[11px] leading-4 text-pine transition-colors hover:bg-pine hover:text-sheet"
+                  @click="applyToday"
+                >
+                  用今天
+                </button>
+              </div>
             </div>
+            <p class="mt-2 text-[11px] leading-5 text-faint">选日期或点「用今天」，会同时更新日期、周次和周键。</p>
             <div class="mt-4 grid grid-cols-1 gap-x-7 gap-y-4 sm:grid-cols-2">
               <FieldInput
                 v-for="field in SCORE_FIELDS"
