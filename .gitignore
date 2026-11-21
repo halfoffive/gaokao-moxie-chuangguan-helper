@@ -155,3 +155,6 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# 含真实学生名单的原版网页（仅本地保留，不入库）
+/source-file/2026-11-20/.private/
