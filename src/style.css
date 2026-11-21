@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* 与闯关页同一套纸色/松绿/朱砂，但这里更像教师的登分册 */
+@theme {
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", system-ui, sans-serif;
+  --font-title: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --color-paper: #f2eada;
+  --color-sheet: #fbf6ea;
+  --color-ink: #25211a;
+  --color-faint: #6f6757;
+  --color-pine: #2b574b;
+  --color-pine-deep: #1c3a32;
+  --color-vermilion: #b03a29;
+  --color-ochre: #ad8338;
+  --color-rule: #d8cbb2;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: #e6d3a2;
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pine);
+    outline-offset: 2px;
+  }
+
+  input,
+  textarea {
+    font: inherit;
+  }
+}

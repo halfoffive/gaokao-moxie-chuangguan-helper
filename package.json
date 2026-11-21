@@ -1,0 +1,25 @@
+{
+  "name": "gaokao-moxie-chuangguan-helper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "古诗文闯关成绩码编解码台：粘贴解码，改动即生成",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "dependencies": {
+    "vue": "^3.5.46"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "@vitejs/plugin-vue": "^6.0.11",
+    "tailwindcss": "^4.3.5",
+    "vite": "^8.3.8"
+  }
+}
