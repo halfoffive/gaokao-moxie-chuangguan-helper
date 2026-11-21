@@ -94,12 +94,12 @@ src/
   App.vue                # 页面与双向同步
   components/
     FieldInput.vue       # 下划线字段输入
-    FingerprintTool.vue  # 学号指纹计算与候选推算
+    StudentIdTool.vue    # 学号指纹计算与候选推算
   lib/
     codec.js             # 纯函数编解码
     device.js            # 本机随机设备标识
     fields.js            # 字段中文标签与提示
-    fingerprint.js       # 学号指纹与范围搜索
+    student-id.js        # 学号指纹与范围搜索
     template.js          # 示例数据与周次工具
 tests/
   codec.test.js
@@ -121,6 +121,10 @@ source-file/
 - 题库和页面逻辑保留，方便核对成绩码格式。
 
 含真实名单的原版仅保存在本地 `source-file/2026-11-20/.private/`，该目录已被 `.gitignore` 忽略，不进入仓库。工具运行时不读取这个 HTML，也不包含任何名单或学号。
+
+## 故障排查
+
+如果页面空白，控制台出现 `net::ERR_BLOCKED_BY_CLIENT`，且被拦资源名包含 `fingerprint`，通常是广告/隐私扩展按文件名拦截了模块。项目已把该模块改为 `student-id.js`，组件改为 `StudentIdTool.vue`；更新后请重启 `npm run dev` 并强制刷新页面。仍被拦截时，可把 `127.0.0.1:5173` 加入扩展白名单或临时停用扩展。
 
 ## 上传到 GitHub
 

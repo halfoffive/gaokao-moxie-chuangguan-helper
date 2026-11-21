@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 import FieldInput from './components/FieldInput.vue';
-import FingerprintTool from './components/FingerprintTool.vue';
+import StudentIdTool from './components/StudentIdTool.vue';
 import {
   FIELD_ORDER,
   NUMBER_FIELDS,
@@ -372,11 +372,11 @@ onBeforeUnmount(() => {
             </div>
           </section>
 
-          <section class="mt-7 border-t border-rule pt-6" aria-labelledby="fingerprint-heading">
+          <section class="mt-7 border-t border-rule pt-6" aria-labelledby="student-id-heading">
             <div class="flex items-baseline justify-between gap-3 border-b border-rule pb-2">
-              <h3 id="fingerprint-heading" class="font-title text-lg text-pine">学号指纹</h3>
+              <h3 id="student-id-heading" class="font-title text-lg text-pine">学号指纹</h3>
             </div>
-            <FingerprintTool :fingerprint="String(draft.u ?? '')" @apply="updateField('u', $event)" />
+            <StudentIdTool :fingerprint="String(draft.u ?? '')" @apply="updateField('u', $event)" />
           </section>
 
           <section class="mt-7 border-t border-rule pt-6" aria-labelledby="score-heading">

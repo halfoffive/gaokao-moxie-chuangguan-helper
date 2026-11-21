@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
 
-import { fingerprintOf, findFingerprintMatches } from '../lib/fingerprint.js';
+import { fingerprintOf, findFingerprintMatches } from '../lib/student-id.js';
 
 const props = defineProps({
   fingerprint: { type: String, default: '' },

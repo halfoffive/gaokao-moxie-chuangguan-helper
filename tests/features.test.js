@@ -7,7 +7,7 @@ import {
   makeDeviceId,
   readOrCreateDeviceId,
 } from '../src/lib/device.js';
-import { fingerprintOf, findFingerprintMatches, isFingerprint } from '../src/lib/fingerprint.js';
+import { fingerprintOf, findFingerprintMatches, isFingerprint } from '../src/lib/student-id.js';
 
 const fakeStorage = (initial = {}) => {
   const map = new Map(Object.entries(initial));
